@@ -1,0 +1,8 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "straw-poll-server:lib"
+    - path: "./app"
+      component: "straw-poll-server:exe:straw-poll-server-exe"
+    - path: "./test"
+      component: "straw-poll-server:test:straw-poll-server-test"
