@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Control.Exception (throw)
+import Control.Exception (throwIO)
 import Data.Pool (Pool, withResource)
 import qualified Database.PostgreSQL.Simple as Postgres
 import StrawPoll.Config (Config (..))
@@ -12,7 +12,7 @@ getConfig :: IO Config
 getConfig = do
   configResult <- Config.getConfig
   case configResult of
-    Left err -> throw err
+    Left err -> throwIO err
     Right config -> pure config
 
 makeEnv :: Pool Postgres.Connection -> Http.Env
