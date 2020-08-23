@@ -73,3 +73,5 @@ tests:
     dependencies:
     - straw-poll-server
     - hspec
+    - hspec-wai
+    - hspec-wai-json

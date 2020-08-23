@@ -2,7 +2,6 @@ module Main (main) where
 
 import Control.Exception (throw)
 import Data.Pool (Pool, withResource)
-import Data.Time (getCurrentTime)
 import qualified Database.PostgreSQL.Simple as Postgres
 import StrawPoll.Config (Config (..))
 import qualified StrawPoll.Config as Config
@@ -19,9 +18,7 @@ getConfig = do
 makeEnv :: Pool Postgres.Connection -> Http.Env
 makeEnv pool =
   Http.Env
-    { Http.envGetCurrentTime =
-        getCurrentTime,
-      Http.envSavePoll = \unsavedPoll ->
+    { Http.envSavePoll = \unsavedPoll ->
         withResource pool $ \connection ->
           Database.savePoll connection unsavedPoll,
       Http.envFindPoll = \pollId ->

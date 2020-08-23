@@ -10,7 +10,7 @@ import Data.Function ((&))
 import Data.Text (Text)
 import qualified Data.Text as Text
 import qualified Data.Text.IO as TextIO
-import Data.Time (UTCTime)
+import Data.Time (getCurrentTime)
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as Wai
 import qualified Network.Wai.Handler.Warp as Warp
@@ -18,8 +18,7 @@ import StrawPoll.Poll (Answer, Id (..), Poll, SavePoll, SaveVote, VoteResult (..
 import Text.Read (readMaybe)
 
 data Env = Env
-  { envGetCurrentTime :: IO UTCTime,
-    envSavePoll :: SavePoll IO,
+  { envSavePoll :: SavePoll IO,
     envSaveVote :: SaveVote IO,
     envFindPoll :: Id Poll -> IO (Maybe Poll)
   }
@@ -51,7 +50,7 @@ type Handler = Env -> Wai.Application
 postPollsHandler :: Handler
 postPollsHandler Env {..} request send =
   withJsonBody request send $ \poll -> do
-    currentTime <- envGetCurrentTime
+    currentTime <- getCurrentTime
     result <- createPoll envSavePoll currentTime poll
     send $ case result of
       Left errors ->
@@ -65,7 +64,7 @@ postPollsVotesHandler pollId answerId Env {..} _ send =
     Nothing ->
       send $ jsonResponse @Text HTTP.notFound404 "Cannot find requested poll."
     Just poll -> do
-      currentTime <- envGetCurrentTime
+      currentTime <- getCurrentTime
       voteResult <- vote envSaveVote currentTime poll answerId
       send $ case voteResult of
         AnswerNotFound ->

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9385ca98dd54cc394e322cffa4d95ede67b109a56d1400056357ecf7ef04e4e2
+-- hash: ca4460419933d3274e50ca940cacc3bd4d73f0efbbfe88784ca3204284e0e6a6
 
 name:           straw-poll-server
 version:        0.1.0.0
@@ -79,6 +79,8 @@ test-suite straw-poll-server-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Shared
+      StrawPoll.HttpSpec
       StrawPoll.PollSpec
       Paths_straw_poll_server
   hs-source-dirs:
@@ -91,6 +93,8 @@ test-suite straw-poll-server-test
     , bytestring
     , containers
     , hspec
+    , hspec-wai
+    , hspec-wai-json
     , http-types
     , postgresql-simple
     , resource-pool

@@ -1,20 +1,14 @@
 module StrawPoll.PollSpec (spec) where
 
-import Control.Monad.ST (runST)
 import Data.Functor.Identity (Identity (..))
-import Data.STRef (modifySTRef', newSTRef, readSTRef)
-import Data.Text (Text)
 import Data.Time (UTCTime, addUTCTime, getCurrentTime, nominalDay, utcToLocalZonedTime)
-import Data.Traversable (for)
-import StrawPoll.NonEmptyText (NonEmptyText)
-import qualified StrawPoll.NonEmptyText as NonEmptyText
+import Shared (savePoll, unsafeNonEmptyText)
 import StrawPoll.Poll
   ( Answer (..),
     CreatePollRequest (..),
     CreatePollRequestErrors (..),
     Id (..),
     Poll (..),
-    UnsavedPoll (..),
     VoteResult (..),
   )
 import qualified StrawPoll.Poll as Poll
@@ -23,34 +17,11 @@ import Test.Hspec (Spec, describe, it, runIO, shouldBe)
 
 createPoll :: UTCTime -> CreatePollRequest -> Either CreatePollRequestErrors Poll
 createPoll currentTime =
-  let fakeSavePoll UnsavedPoll {..} =
-        Poll
-          { pollId = Id 11,
-            pollQuestion = unsavedPollQuestion,
-            pollExpiration = unsavedPollExpiration,
-            pollAnswers = runST $ do
-              idRef <- newSTRef 1
-              for unsavedPollAnswers $ \answerText -> do
-                answerId <- Id <$> readSTRef idRef
-                modifySTRef' idRef succ
-                pure $
-                  Answer
-                    { answerId = answerId,
-                      answerText = answerText,
-                      answerVotes = 0
-                    }
-          }
-   in runIdentity . Poll.createPoll (Identity . fakeSavePoll) currentTime
+  runIdentity . Poll.createPoll (Identity . savePoll) currentTime
 
 vote :: UTCTime -> Poll -> Id Answer -> VoteResult
 vote currentTime poll =
   runIdentity . Poll.vote (\_ _ -> pure ()) currentTime poll
-
-unsafeNonEmptyText :: Text -> NonEmptyText
-unsafeNonEmptyText text =
-  case NonEmptyText.make text of
-    Just a -> a
-    Nothing -> error "Make sure you only pass non-empty text to me."
 
 spec :: Spec
 spec = do
@@ -271,7 +242,7 @@ spec = do
                 }
        in createPoll currentTime request `shouldBe` expectedResponse
 
-    it "allows a poll to be made when all rules are sastified" $ do
+    it "allows a poll to be made when all rules are satisfied" $ do
       expiration <- utcToLocalZonedTime $ addUTCTime nominalDay currentTime
       let request =
             CreatePollRequest
