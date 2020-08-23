@@ -18,3 +18,5 @@ if [ ! "$(docker ps -aq -f name=$container_name)" ]; then
 elif [ "$(docker ps -aq -f status=exited -f name=$container_name)" ]; then
     docker start $container_name
 fi
+
+./database-migrate.sh

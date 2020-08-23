@@ -86,7 +86,7 @@ getConfig = do
   connectionString <-
     runConfigVar $
       ConfigVar
-        { configVarName = "STRAW_POLL_CONNECTION_STRING",
+        { configVarName = "STRAW_POLL_PG",
           configVarDescription = "Libpq connection string for postgres database",
           configVarConvert = Just . Char8.pack
         }
