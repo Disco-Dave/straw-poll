@@ -22,5 +22,7 @@ services:
       - STRAW_POLL_PG_PORT=5432
       - STRAW_POLL_PG_MIGRATE_USER=${STRAW_POLL_PG_MIGRATE_USER:-postgres}
       - STRAW_POLL_PG_MIGRATE_PASSWORD=${STRAW_POLL_PG_MIGRATE_PASSWORD:-postgres}
+    volumes:
+      - "./migrations:/migrations"
     depends_on:
       - database

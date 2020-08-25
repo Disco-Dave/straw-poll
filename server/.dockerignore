@@ -1,5 +1,8 @@
-./.stack-work
-./test
-./LICENSE
-./straw-poll-server.cabal
-./hie.yaml
+.stack-work
+test
+.gitignore
+Dockerfile
+.dockerignore
+hie.yaml
+LICENSE
+straw-poll-server.cabal
