@@ -8,7 +8,6 @@ module StrawPoll.Database
   )
 where
 
-import Data.ByteString (ByteString)
 import Data.Function ((&))
 import Data.Functor (void, (<&>))
 import qualified Data.Map.Strict as Map
@@ -21,9 +20,9 @@ import qualified StrawPoll.NonEmptyText as NonEmptyText
 import StrawPoll.Poll (Answer (..), Id (..), Poll (..), UnsavedPoll (..))
 import qualified StrawPoll.TwoOrMore as TwoOrMore
 
-createPool :: ByteString -> IO (Pool Postgres.Connection)
-createPool connectionString =
-  let create = Postgres.connectPostgreSQL connectionString
+createPool :: Postgres.ConnectInfo -> IO (Pool Postgres.Connection)
+createPool connectInfo =
+  let create = Postgres.connect connectInfo
       destroy = Postgres.close
       idleTime = 5
       stripeCount = 5

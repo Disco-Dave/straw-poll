@@ -8,11 +8,10 @@ module StrawPoll.Config
 where
 
 import Control.Exception (Exception)
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.Char8 as Char8
 import Data.Foldable (toList)
 import Data.List (intercalate)
 import Data.List.NonEmpty (NonEmpty (..))
+import Data.Word (Word16)
 import Network.Wai.Handler.Warp (Port)
 import StrawPoll.Validation (Validation (..))
 import qualified StrawPoll.Validation as Validation
@@ -27,8 +26,11 @@ data ConfigVar value = ConfigVar
   }
 
 data Config = Config
-  { configConnectionString :: !ByteString,
-    configHttpPort :: !Port
+  { configHttpPort :: !Port,
+    configPgHost :: !String,
+    configPgPort :: !Word16,
+    configPgUser :: !String,
+    configPgPassword :: !String
   }
   deriving (Show, Eq)
 
@@ -83,21 +85,45 @@ runConfigVar ConfigVar {..} =
 
 getConfig :: IO (Either ConfigErrors Config)
 getConfig = do
-  connectionString <-
-    runConfigVar $
-      ConfigVar
-        { configVarName = "STRAW_POLL_PG",
-          configVarDescription = "Libpq connection string for postgres database",
-          configVarConvert = Just . Char8.pack
-        }
-  port <-
+  httpPort <-
     runConfigVar $
       ConfigVar
         { configVarName = "STRAW_POLL_HTTP_PORT",
-          configVarDescription = "Port to run the http server on",
+          configVarDescription = "Port to run HTTP server on",
           configVarConvert = readMaybe
+        }
+  pgHost <-
+    runConfigVar $
+      ConfigVar
+        { configVarName = "STRAW_POLL_PG_HOST",
+          configVarDescription = "Postgres host for the application",
+          configVarConvert = pure
+        }
+  pgPort <-
+    runConfigVar $
+      ConfigVar
+        { configVarName = "STRAW_POLL_PG_PORT",
+          configVarDescription = "Postgres port for the application",
+          configVarConvert = readMaybe
+        }
+  pgUser <-
+    runConfigVar $
+      ConfigVar
+        { configVarName = "STRAW_POLL_PG_USER",
+          configVarDescription = "Postgres user for the application",
+          configVarConvert = pure
+        }
+  pgPassword <-
+    runConfigVar $
+      ConfigVar
+        { configVarName = "STRAW_POLL_PG_PASSWORD",
+          configVarDescription = "Postgres password for the application",
+          configVarConvert = pure
         }
   pure . Validation.toEither $
     Config
-      <$> connectionString
-      <*> port
+      <$> httpPort
+      <*> pgHost
+      <*> pgPort
+      <*> pgUser
+      <*> pgPassword

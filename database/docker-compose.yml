@@ -16,21 +16,11 @@ services:
       - database-data:/var/lib/postgresql/data
 
   migrate-database:
-    build: ./database
+    build: .
     environment:
       - STRAW_POLL_PG_HOST=database
       - STRAW_POLL_PG_PORT=5432
       - STRAW_POLL_PG_MIGRATE_USER=${STRAW_POLL_PG_MIGRATE_USER:-postgres}
       - STRAW_POLL_PG_MIGRATE_PASSWORD=${STRAW_POLL_PG_MIGRATE_PASSWORD:-postgres}
-    depends_on:
-      - database
-
-  web-server:
-    build: ./server
-    environment:
-      - STRAW_POLL_PG=host=database port=5432 dbname=straw_poll user=${STRAW_POLL_PG_HTTP_USER:-postgres} password=${STRAW_POLL_PG_HTTP_PASSWORD:-postgres}
-      - STRAW_POLL_HTTP_PORT=${STRAW_POLL_HTTP_PORT:-9999}
-    ports:
-      - "${STRAW_POLL_HTTP_PORT:-9999}:${STRAW_POLL_HTTP_PORT:-9999}"
     depends_on:
       - database

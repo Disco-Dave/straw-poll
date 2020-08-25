@@ -1,8 +1,5 @@
-./Dockerfile
 ./.stack-work
-./dist
 ./test
-./set_env.sh
 ./LICENSE
 ./straw-poll-server.cabal
 ./hie.yaml

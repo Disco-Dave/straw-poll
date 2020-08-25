@@ -32,5 +32,15 @@ makeEnv pool =
 main :: IO ()
 main = do
   Config {..} <- getConfig
-  env <- makeEnv <$> Database.createPool configConnectionString
+
+  let connectInfo = 
+        Postgres.ConnectInfo
+          { connectHost = configPgHost,
+            connectPort = configPgPort,
+            connectUser = configPgUser,
+            connectPassword = configPgPassword,
+            connectDatabase = "straw_poll"
+          }
+
+  env <- makeEnv <$> Database.createPool connectInfo
   Http.start env configHttpPort
