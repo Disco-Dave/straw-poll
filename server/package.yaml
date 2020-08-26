@@ -33,6 +33,7 @@ default-extensions:
 - RecordWildCards
 - TupleSections
 - TypeApplications
+- TypeFamilies
 - ViewPatterns
 
 dependencies:
@@ -47,6 +48,7 @@ dependencies:
 - time
 - wai
 - warp
+- yesod-core
 
 library:
   source-dirs: src

@@ -21,8 +21,9 @@ httpEnv =
     }
 
 withApplication :: Env -> HspecWai.WaiSession () a -> IO a
-withApplication env =
-  HspecWaiInternal.withApplication $ application env
+withApplication env assertion = do
+  app <- application env
+  HspecWaiInternal.withApplication app assertion
 
 spec :: Spec
 spec = do

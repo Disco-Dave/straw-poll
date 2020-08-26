@@ -1,3 +1,6 @@
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+
 module StrawPoll.Http
   ( Env (..),
     application,
@@ -5,7 +8,6 @@ module StrawPoll.Http
   )
 where
 
-import qualified Data.Aeson as Aeson
 import Data.Function ((&))
 import Data.Text (Text)
 import qualified Data.Text as Text
@@ -15,7 +17,7 @@ import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as Wai
 import qualified Network.Wai.Handler.Warp as Warp
 import StrawPoll.Poll (Answer, Id (..), Poll, SavePoll, SaveVote, VoteResult (..), createPoll, vote)
-import Text.Read (readMaybe)
+import Yesod.Core
 
 data Env = Env
   { envSavePoll :: SavePoll IO,
@@ -23,80 +25,55 @@ data Env = Env
     envFindPoll :: Id Poll -> IO (Maybe Poll)
   }
 
-jsonResponse :: Aeson.ToJSON body => HTTP.Status -> body -> Wai.Response
-jsonResponse status body =
-  Wai.responseLBS
-    status
-    [("Content-Type", "application/json")]
-    (Aeson.encode body)
+instance Yesod Env
 
-parseId :: Text -> Maybe (Id entity)
-parseId = fmap Id . readMaybe . Text.unpack
+mkYesod
+  "Env"
+  [parseRoutes|
+    /polls PollsR POST
+    /polls/#Integer PollR GET
+    /polls/#Integer/votes/#Integer VoteR POST
+  |]
 
-withJsonBody ::
-  Aeson.FromJSON a =>
-  Wai.Request ->
-  (Wai.Response -> IO Wai.ResponseReceived) ->
-  (a -> IO Wai.ResponseReceived) ->
-  IO Wai.ResponseReceived
-withJsonBody request send handleBody = do
-  rawBody <- Wai.strictRequestBody request
-  case Aeson.eitherDecode rawBody of
-    Right body -> handleBody body
-    Left err -> send $ jsonResponse HTTP.badRequest400 err
+postPollsR :: Handler Value
+postPollsR = do
+  poll <- requireInsecureJsonBody
+  currentTime <- liftIO getCurrentTime
+  savePoll <- fmap envSavePoll getYesod
+  result <- liftIO $ createPoll savePoll currentTime poll
+  case result of
+    Left errors ->
+      sendStatusJSON HTTP.badRequest400 errors
+    Right createdPoll ->
+      sendStatusJSON HTTP.created201 createdPoll
 
-type Handler = Env -> Wai.Application
+getPollR :: Integer -> Handler Value
+getPollR (Id @Poll -> pollId) = do
+  findPoll <- fmap envFindPoll getYesod
+  liftIO (findPoll pollId) >>= \case
+    Nothing -> sendStatusJSON HTTP.notFound404 ("" :: Text)
+    Just poll -> returnJson poll
 
-postPollsHandler :: Handler
-postPollsHandler Env {..} request send =
-  withJsonBody request send $ \poll -> do
-    currentTime <- getCurrentTime
-    result <- createPoll envSavePoll currentTime poll
-    send $ case result of
-      Left errors ->
-        jsonResponse HTTP.badRequest400 errors
-      Right createdPoll ->
-        jsonResponse HTTP.created201 createdPoll
-
-postPollsVotesHandler :: Id Poll -> Id Answer -> Handler
-postPollsVotesHandler pollId answerId Env {..} _ send =
-  envFindPoll pollId >>= \case
+postVoteR :: Integer -> Integer -> Handler Value
+postVoteR (Id @Poll -> pollId) (Id @Answer -> answerId) = do
+  env <- getYesod
+  let (findPoll, saveVote) = (envFindPoll env, envSaveVote env)
+  liftIO (findPoll pollId) >>= \case
     Nothing ->
-      send $ jsonResponse @Text HTTP.notFound404 "Cannot find requested poll."
+      sendStatusJSON @_ @Text HTTP.notFound404 "Cannot find requested poll."
     Just poll -> do
-      currentTime <- getCurrentTime
-      voteResult <- vote envSaveVote currentTime poll answerId
-      send $ case voteResult of
+      currentTime <- liftIO getCurrentTime
+      voteResult <- liftIO $ vote saveVote currentTime poll answerId
+      case voteResult of
         AnswerNotFound ->
-          jsonResponse @Text HTTP.notFound404 "Cannot find requested answer."
+          sendStatusJSON @_ @Text HTTP.notFound404 "Cannot find requested answer."
         PollIsExpired ->
-          jsonResponse @Text HTTP.badRequest400 "Poll is expired."
+          sendStatusJSON @_ @Text HTTP.badRequest400 "Poll is expired."
         VoteAccepted updatedPoll ->
-          jsonResponse HTTP.ok200 updatedPoll
+          returnJson updatedPoll
 
-getPollsHandler :: Id Poll -> Handler
-getPollsHandler pollId Env {..} _ send = do
-  maybePoll <- envFindPoll pollId
-  send $ case maybePoll of
-    Nothing ->
-      Wai.responseLBS HTTP.notFound404 [] mempty
-    Just poll ->
-      jsonResponse HTTP.ok200 poll
-
-application :: Env -> Wai.Application
-application env request send =
-  let method = Wai.requestMethod request
-      pathInfo = Wai.pathInfo request
-      route = case (method, pathInfo) of
-        ("POST", ["polls"]) ->
-          postPollsHandler
-        ("POST", ["polls", parseId -> Just pollId, "votes", parseId -> Just answerId]) ->
-          postPollsVotesHandler pollId answerId
-        ("GET", ["polls", parseId -> Just pollId]) ->
-          getPollsHandler pollId
-        _ ->
-          \_ _ _ -> send $ Wai.responseLBS HTTP.notFound404 [] mempty
-   in route env request send
+application :: Env -> IO Wai.Application
+application env = toWaiAppPlain env
 
 start :: Env -> Warp.Port -> IO ()
 start env port =
@@ -108,4 +85,4 @@ start env port =
          in Warp.defaultSettings
               & Warp.setPort port
               & Warp.setBeforeMainLoop printMessage
-   in Warp.runSettings settings $ application env
+   in application env >>= Warp.runSettings settings
