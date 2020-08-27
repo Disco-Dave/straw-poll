@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ca4460419933d3274e50ca940cacc3bd4d73f0efbbfe88784ca3204284e0e6a6
+-- hash: c2af48f035f3dbcc505a97d7633aa1f5479ca26dd556f105922e2b2b80dc465c
 
 name:           straw-poll-server
 version:        0.1.0.0
@@ -36,7 +36,7 @@ library
       Paths_straw_poll_server
   hs-source-dirs:
       src
-  default-extensions: BangPatterns DeriveGeneric LambdaCase NamedFieldPuns OverloadedStrings RecordWildCards TupleSections TypeApplications ViewPatterns
+  default-extensions: BangPatterns DataKinds DeriveGeneric LambdaCase NamedFieldPuns OverloadedStrings RecordWildCards TupleSections TypeApplications TypeFamilies TypeOperators ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
@@ -46,6 +46,7 @@ library
     , http-types
     , postgresql-simple
     , resource-pool
+    , servant-server
     , text
     , time
     , wai
@@ -58,7 +59,7 @@ executable straw-poll-server-exe
       Paths_straw_poll_server
   hs-source-dirs:
       app
-  default-extensions: BangPatterns DeriveGeneric LambdaCase NamedFieldPuns OverloadedStrings RecordWildCards TupleSections TypeApplications ViewPatterns
+  default-extensions: BangPatterns DataKinds DeriveGeneric LambdaCase NamedFieldPuns OverloadedStrings RecordWildCards TupleSections TypeApplications TypeFamilies TypeOperators ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -68,6 +69,7 @@ executable straw-poll-server-exe
     , http-types
     , postgresql-simple
     , resource-pool
+    , servant-server
     , straw-poll-server
     , text
     , time
@@ -85,7 +87,7 @@ test-suite straw-poll-server-test
       Paths_straw_poll_server
   hs-source-dirs:
       test
-  default-extensions: BangPatterns DeriveGeneric LambdaCase NamedFieldPuns OverloadedStrings RecordWildCards TupleSections TypeApplications ViewPatterns
+  default-extensions: BangPatterns DataKinds DeriveGeneric LambdaCase NamedFieldPuns OverloadedStrings RecordWildCards TupleSections TypeApplications TypeFamilies TypeOperators ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -98,6 +100,7 @@ test-suite straw-poll-server-test
     , http-types
     , postgresql-simple
     , resource-pool
+    , servant-server
     , straw-poll-server
     , text
     , time

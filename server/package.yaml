@@ -26,6 +26,7 @@ ghc-options:
 
 default-extensions:
 - BangPatterns
+- DataKinds
 - DeriveGeneric
 - LambdaCase
 - NamedFieldPuns
@@ -33,6 +34,8 @@ default-extensions:
 - RecordWildCards
 - TupleSections
 - TypeApplications
+- TypeFamilies
+- TypeOperators
 - ViewPatterns
 
 dependencies:
@@ -47,6 +50,7 @@ dependencies:
 - time
 - wai
 - warp
+- servant-server
 
 library:
   source-dirs: src
