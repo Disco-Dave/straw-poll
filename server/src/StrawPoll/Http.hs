@@ -37,7 +37,7 @@ mkYesod
 
 postPollsR :: Handler Value
 postPollsR = do
-  poll <- requireInsecureJsonBody
+  poll <- requireCheckJsonBody
   currentTime <- liftIO getCurrentTime
   savePoll <- fmap envSavePoll getYesod
   result <- liftIO $ createPoll savePoll currentTime poll
