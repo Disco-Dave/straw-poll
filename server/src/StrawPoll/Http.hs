@@ -6,6 +6,7 @@ module StrawPoll.Http
 where
 
 import qualified Data.Aeson as Aeson
+import qualified Data.ByteString as ByteString
 import Data.Function ((&))
 import Data.Text (Text)
 import qualified Data.Text as Text
@@ -39,11 +40,19 @@ withJsonBody ::
   (Wai.Response -> IO Wai.ResponseReceived) ->
   (a -> IO Wai.ResponseReceived) ->
   IO Wai.ResponseReceived
-withJsonBody request send handleBody = do
-  rawBody <- Wai.strictRequestBody request
-  case Aeson.eitherDecode rawBody of
-    Right body -> handleBody body
-    Left err -> send $ jsonResponse HTTP.badRequest400 err
+withJsonBody request send handleBody
+  | not hasJsonHeader =
+    send $ Wai.responseLBS HTTP.badRequest400 [] mempty
+  | otherwise = do
+    rawBody <- Wai.strictRequestBody request
+    case Aeson.eitherDecode rawBody of
+      Right body -> handleBody body
+      Left err -> send $ jsonResponse HTTP.badRequest400 err
+  where
+    isJson = ByteString.isInfixOf "application/json"
+    isJsonHeader (headerName, headerValue) =
+      headerName == "Content-Type" && isJson headerValue
+    hasJsonHeader = any isJsonHeader (Wai.requestHeaders request)
 
 type Handler = Env -> Wai.Application
 

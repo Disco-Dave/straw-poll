@@ -31,13 +31,16 @@ spec = do
       HspecWai.get "/unknown" `HspecWai.shouldRespondWith` 404
 
   describe "POST /polls" $ do
+    let postJson path body =
+          HspecWai.request "POST" path [("Content-Type", "application/json")] body
+
     it "responds with 400 if body is empty" $
       withApplication httpEnv $
-        HspecWai.post "/polls" mempty `HspecWai.shouldRespondWith` 400
+        postJson "/polls" mempty `HspecWai.shouldRespondWith` 400
 
     it "responds with 400 if body is not valid CreatePollRequest json" $
       withApplication httpEnv $
-        HspecWai.post "/polls" [json| "some garbage" |] `HspecWai.shouldRespondWith` 400
+        postJson "/polls" [json| "some garbage" |] `HspecWai.shouldRespondWith` 400
 
     it "responds with 400 if there are errors" $
       withApplication httpEnv $
@@ -57,7 +60,7 @@ spec = do
                 {
                   "expiration": "Expiration may not be less than or equal to today."
                 } |]
-         in HspecWai.post "/polls" request `HspecWai.shouldRespondWith` response {HspecWai.matchStatus = 400}
+         in postJson "/polls" request `HspecWai.shouldRespondWith` response {HspecWai.matchStatus = 400}
 
     it "responds with 201 and created poll in response body if successful" $
       withApplication httpEnv $
@@ -94,7 +97,21 @@ spec = do
                     }
                   ]
                 } |]
-         in HspecWai.post "/polls" request `HspecWai.shouldRespondWith` response {HspecWai.matchStatus = 201}
+         in postJson "/polls" request `HspecWai.shouldRespondWith` response {HspecWai.matchStatus = 201}
+
+    it "responds with 400 if missing json content header" $
+      withApplication httpEnv $
+        let request =
+              [json| 
+                { 
+                  "question": "Should you answer yes or no?",
+                  "answers": [
+                    "Yes",
+                    "No",
+                    "Not sure"
+                  ]
+                } |]
+         in HspecWai.post "/polls" request `HspecWai.shouldRespondWith` 400
 
   describe "POST /polls/:pollId/votes/:answerId" $ do
     it "responds with 404 if poll id is invalid" $
