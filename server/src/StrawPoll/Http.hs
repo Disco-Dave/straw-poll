@@ -63,7 +63,7 @@ handleVoting Env {..} (Id -> pollId) (Id -> answerId) =
         AnswerNotFound ->
           throwJsonError @Text err404 "Cannot find requested answer."
         PollIsExpired ->
-          throwJsonError @Text err404 "Poll is expired."
+          throwJsonError @Text err400 "Poll is expired."
         VoteAccepted updatedPoll ->
           pure updatedPoll
 
