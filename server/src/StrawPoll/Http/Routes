@@ -1,0 +1,3 @@
+/polls PollsR POST
+/polls/#Integer PollR GET
+/polls/#Integer/votes/#Integer VoteR POST

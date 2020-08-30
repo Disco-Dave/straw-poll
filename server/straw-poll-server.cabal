@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1c5a27eac9b67fa7f06df9e2400ce66ce89fc47801ed1d844de66a2b7cce082f
+-- hash: bb65b37438ce9533a1db843e807b24f18e33e529f3c7a9c2596262aa67bc2e5b
 
 name:           straw-poll-server
 version:        0.1.0.0
@@ -28,6 +28,8 @@ library
       StrawPoll.Config
       StrawPoll.Database
       StrawPoll.Http
+      StrawPoll.Http.Env
+      StrawPoll.Http.Handlers
       StrawPoll.NonEmptyText
       StrawPoll.Poll
       StrawPoll.TwoOrMore
