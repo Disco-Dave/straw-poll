@@ -42,6 +42,7 @@ dependencies:
 - bytestring
 - containers
 - http-types
+- mtl
 - postgresql-simple
 - resource-pool
 - text

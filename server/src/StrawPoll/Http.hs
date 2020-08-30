@@ -8,6 +8,7 @@ module StrawPoll.Http
   )
 where
 
+import Control.Monad.Reader (local)
 import Data.Function ((&))
 import Data.Text (Text)
 import qualified Data.Text as Text
@@ -18,6 +19,7 @@ import qualified Network.Wai as Wai
 import qualified Network.Wai.Handler.Warp as Warp
 import StrawPoll.Poll (Answer, Id (..), Poll, SavePoll, SaveVote, VoteResult (..), createPoll, vote)
 import Yesod.Core
+import Yesod.Core.Types (HandlerData (..))
 
 data Env = Env
   { envSavePoll :: SavePoll IO,
@@ -25,7 +27,15 @@ data Env = Env
     envFindPoll :: Id Poll -> IO (Maybe Poll)
   }
 
-instance Yesod Env
+instance Yesod Env where
+  makeSessionBackend _ = pure Nothing
+  errorHandler err =
+    let useJsonRep handlerData@HandlerData {handlerRequest} =
+          handlerData
+            { handlerRequest =
+                handlerRequest {reqAccept = ["application/json"]}
+            }
+     in local useJsonRep $ defaultErrorHandler err
 
 mkYesod
   "Env"

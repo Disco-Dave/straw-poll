@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8aec394d824cddddadcbd2d84634be8f5b9ffba489a0143211357273c2c1714f
+-- hash: 1c5a27eac9b67fa7f06df9e2400ce66ce89fc47801ed1d844de66a2b7cce082f
 
 name:           straw-poll-server
 version:        0.1.0.0
@@ -44,6 +44,7 @@ library
     , bytestring
     , containers
     , http-types
+    , mtl
     , postgresql-simple
     , resource-pool
     , text
@@ -67,6 +68,7 @@ executable straw-poll-server-exe
     , bytestring
     , containers
     , http-types
+    , mtl
     , postgresql-simple
     , resource-pool
     , straw-poll-server
@@ -98,6 +100,7 @@ test-suite straw-poll-server-test
     , hspec-wai
     , hspec-wai-json
     , http-types
+    , mtl
     , postgresql-simple
     , resource-pool
     , straw-poll-server
