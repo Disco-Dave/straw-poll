@@ -15,6 +15,7 @@ import Data.Time (getCurrentTime)
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as Wai
 import qualified Network.Wai.Handler.Warp as Warp
+import qualified Network.Wai.Middleware.Cors as Cors
 import StrawPoll.Poll (Answer, Id (..), Poll, SavePoll, SaveVote, VoteResult (..), createPoll, vote)
 import Text.Read (readMaybe)
 
@@ -93,19 +94,26 @@ getPollsHandler pollId Env {..} _ send = do
       jsonResponse HTTP.ok200 poll
 
 application :: Env -> Wai.Application
-application env request send =
-  let method = Wai.requestMethod request
-      pathInfo = Wai.pathInfo request
-      route = case (method, pathInfo) of
-        ("POST", ["polls"]) ->
-          postPollsHandler
-        ("POST", ["polls", parseId -> Just pollId, "votes", parseId -> Just answerId]) ->
-          postPollsVotesHandler pollId answerId
-        ("GET", ["polls", parseId -> Just pollId]) ->
-          getPollsHandler pollId
-        _ ->
-          \_ _ _ -> send $ Wai.responseLBS HTTP.notFound404 [] mempty
-   in route env request send
+application env =
+  let addCors =
+        Cors.simpleCorsResourcePolicy
+          { Cors.corsRequestHeaders = ["Content-Type"]
+          }
+          & Cors.cors . const . Just
+      waiApp request send =
+        let method = Wai.requestMethod request
+            pathInfo = Wai.pathInfo request
+            route = case (method, pathInfo) of
+              ("POST", ["polls"]) ->
+                postPollsHandler
+              ("POST", ["polls", parseId -> Just pollId, "votes", parseId -> Just answerId]) ->
+                postPollsVotesHandler pollId answerId
+              ("GET", ["polls", parseId -> Just pollId]) ->
+                getPollsHandler pollId
+              _ ->
+                \_ _ _ -> send $ Wai.responseLBS HTTP.notFound404 [] mempty
+         in route env request send
+   in addCors waiApp
 
 start :: Env -> Warp.Port -> IO ()
 start env port =

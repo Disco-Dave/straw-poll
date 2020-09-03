@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ca4460419933d3274e50ca940cacc3bd4d73f0efbbfe88784ca3204284e0e6a6
+-- hash: 82fa34d1af019a32a4aa829aa45417205bc04ed3699a62006b49ce16ddd50bd6
 
 name:           straw-poll-server
 version:        0.1.0.0
@@ -49,6 +49,7 @@ library
     , text
     , time
     , wai
+    , wai-cors
     , warp
   default-language: Haskell2010
 
@@ -72,6 +73,7 @@ executable straw-poll-server-exe
     , text
     , time
     , wai
+    , wai-cors
     , warp
   default-language: Haskell2010
 
@@ -102,5 +104,6 @@ test-suite straw-poll-server-test
     , text
     , time
     , wai
+    , wai-cors
     , warp
   default-language: Haskell2010
