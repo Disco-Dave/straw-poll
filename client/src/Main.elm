@@ -1,99 +1,73 @@
 module Main exposing (main)
 
-import Browser
-import Browser.Navigation as Nav
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Url
-
-
-
--- MAIN
-
-
-main : Program () Model Msg
-main =
-  Browser.application
-    { init = init
-    , view = view
-    , update = update
-    , subscriptions = subscriptions
-    , onUrlChange = UrlChanged
-    , onUrlRequest = LinkClicked
-    }
-
-
-
--- MODEL
+import Browser exposing (Document, UrlRequest(..), application)
+import Browser.Navigation as Navigation
+import Page exposing (Page)
+import Route exposing (Route(..))
+import Url exposing (Url)
 
 
 type alias Model =
-  { key : Nav.Key
-  , url : Url.Url
-  }
+    { navigationKey : Navigation.Key
+    , page : Page
+    }
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-  ( Model key url, Cmd.none )
+type Message
+    = UrlRequested UrlRequest
+    | UrlChanged Url
+    | GotPageMessage Page.Message
 
 
-
--- UPDATE
-
-
-type Msg
-  = LinkClicked Browser.UrlRequest
-  | UrlChanged Url.Url
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-  case msg of
-    LinkClicked urlRequest ->
-      case urlRequest of
-        Browser.Internal url ->
-          ( model, Nav.pushUrl model.key (Url.toString url) )
-
-        Browser.External href ->
-          ( model, Nav.load href )
-
-    UrlChanged url ->
-      ( { model | url = url }
-      , Cmd.none
-      )
+init : Url -> Navigation.Key -> ( Model, Cmd Message )
+init url navigationKey =
+    ( { navigationKey = navigationKey
+      , page = Page.init url
+      }
+    , Cmd.none
+    )
 
 
+update : Message -> Model -> ( Model, Cmd Message )
+update message model =
+    case message of
+        UrlChanged url ->
+            ( { model | page = Page.init url }
+            , Cmd.none
+            )
 
--- SUBSCRIPTIONS
+        UrlRequested urlRequest ->
+            case urlRequest of
+                Internal url ->
+                    ( model
+                    , Navigation.pushUrl model.navigationKey (Url.toString url)
+                    )
 
+                External href ->
+                    ( model, Navigation.load href )
 
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-  Sub.none
-
-
-
--- VIEW
-
-
-view : Model -> Browser.Document Msg
-view model =
-  { title = "URL Interceptor"
-  , body =
-      [ text "The current URL is: "
-      , b [] [ text (Url.toString model.url) ]
-      , ul []
-          [ viewLink "/home"
-          , viewLink "/profile"
-          , viewLink "/reviews/the-century-of-the-self"
-          , viewLink "/reviews/public-opinion"
-          , viewLink "/reviews/shah-of-shahs"
-          ]
-      ]
-  }
+        GotPageMessage pageMessage ->
+            let
+                ( updatePageModel, pageCommand ) =
+                    Page.update pageMessage model.page
+            in
+            ( { model | page = updatePageModel }
+            , Cmd.map GotPageMessage pageCommand
+            )
 
 
-viewLink : String -> Html msg
-viewLink path =
-  li [] [ a [ href path ] [ text path ] ]
+view : Model -> Document Message
+view { page } =
+    Page.view GotPageMessage page
+
+
+main : Program () Model Message
+main =
+    application
+        { init = always init
+        , view = view
+        , update = update
+        , subscriptions = always Sub.none
+        , onUrlRequest = UrlRequested
+        , onUrlChange = UrlChanged
+        }

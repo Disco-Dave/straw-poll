@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "serve": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build --no-source-maps index.html"
   },
   "keywords": [],
   "author": "",
