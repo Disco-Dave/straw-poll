@@ -1,4 +1,4 @@
-module Pages.StrawPoll exposing
+module Pages.Poll exposing
     ( Message(..)
     , Model
     , init
@@ -8,7 +8,7 @@ module Pages.StrawPoll exposing
 
 import Browser exposing (Document)
 import Html exposing (h1, text)
-import StrawPoll exposing (StrawPollKey(..))
+import Poll exposing (PollKey(..))
 
 
 type Message
@@ -16,12 +16,12 @@ type Message
 
 
 type alias Model =
-    StrawPollKey
+    PollKey
 
 
-init : StrawPollKey -> Model
-init strawPollKey =
-    strawPollKey
+init : PollKey -> Model
+init pollKey =
+    pollKey
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -32,7 +32,7 @@ update _ model =
 view : Model -> Document Message
 view strawPollKey =
     let
-        displayKey (StrawPollKey key) =
+        displayKey (PollKey key) =
             String.fromInt key
     in
     { title = "Straw Poll"

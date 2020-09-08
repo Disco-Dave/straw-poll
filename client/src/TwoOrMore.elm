@@ -10,9 +10,9 @@ type TwoOrMore a
     = TwoOrMore (List a)
 
 
-make : a -> List a -> TwoOrMore a
-make head tail =
-    TwoOrMore <| head :: tail
+make : a -> a -> List a -> TwoOrMore a
+make first second tail =
+    TwoOrMore <| first :: second :: tail
 
 
 toList : TwoOrMore a -> List a

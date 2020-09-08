@@ -8,35 +8,35 @@ module Page exposing
 
 import Browser exposing (Document)
 import Html
-import Pages.CreateStrawPoll as CreateStrawPollPage
+import Pages.CreatePoll as CreatePollPage
 import Pages.NotFound as NotFoundPage
-import Pages.StrawPoll as StrawPollPage
+import Pages.Poll as PollPage
 import Route
 import Url exposing (Url)
 
 
 type Page
-    = CreateStrawPoll CreateStrawPollPage.Model
-    | StrawPoll StrawPollPage.Model
+    = CreatePoll CreatePollPage.Model
+    | Poll PollPage.Model
     | NotFound
 
 
 init : Url -> Page
 init url =
     case Route.fromUrl url of
-        Just Route.CreateStrawPoll ->
-            CreateStrawPoll CreateStrawPollPage.init
+        Just Route.CreatePoll ->
+            CreatePoll CreatePollPage.init
 
-        Just (Route.StrawPoll key) ->
-            StrawPoll <| StrawPollPage.init key
+        Just (Route.Poll key) ->
+            Poll <| PollPage.init key
 
         Nothing ->
             NotFound
 
 
 type Message
-    = GotCreateStrawPoll CreateStrawPollPage.Message
-    | GotStrawPoll StrawPollPage.Message
+    = GotCreatePoll CreatePollPage.Message
+    | GotPoll PollPage.Message
 
 
 update : Message -> Page -> ( Page, Cmd Message )
@@ -46,13 +46,13 @@ update message page =
             ( toModel newPageModel, Cmd.map toMessage pageCommand )
     in
     case ( message, page ) of
-        ( GotCreateStrawPoll pageMessage, CreateStrawPoll pageModel ) ->
-            CreateStrawPollPage.update pageMessage pageModel
-                |> mapUpdate GotCreateStrawPoll CreateStrawPoll
+        ( GotCreatePoll pageMessage, CreatePoll pageModel ) ->
+            CreatePollPage.update pageMessage pageModel
+                |> mapUpdate GotCreatePoll CreatePoll
 
-        ( GotStrawPoll pageMessage, StrawPoll pageModel ) ->
-            StrawPollPage.update pageMessage pageModel
-                |> mapUpdate GotStrawPoll StrawPoll
+        ( GotPoll pageMessage, Poll pageModel ) ->
+            PollPage.update pageMessage pageModel
+                |> mapUpdate GotPoll Poll
 
         _ ->
             ( page, Cmd.none )
@@ -67,13 +67,13 @@ view toMessage page =
             }
     in
     case page of
-        CreateStrawPoll model ->
-            CreateStrawPollPage.view model
-                |> mapDocument GotCreateStrawPoll
+        CreatePoll model ->
+            CreatePollPage.view model
+                |> mapDocument GotCreatePoll
 
-        StrawPoll model ->
-            StrawPollPage.view model
-                |> mapDocument GotStrawPoll
+        Poll model ->
+            PollPage.view model
+                |> mapDocument GotPoll
 
         NotFound ->
             NotFoundPage.view

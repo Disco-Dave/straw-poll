@@ -1,20 +1,20 @@
 module Route exposing (Route(..), fromUrl)
 
-import StrawPoll exposing (StrawPollKey(..))
+import Poll exposing (PollKey(..))
 import Url exposing (Url)
 import Url.Parser as Url exposing ((</>), Parser, custom, map, oneOf, top)
 
 
 type Route
-    = CreateStrawPoll
-    | StrawPoll StrawPollKey
+    = CreatePoll
+    | Poll PollKey
 
 
-strawPollKey : Parser (StrawPollKey -> a) a
-strawPollKey =
+pollKey : Parser (PollKey -> a) a
+pollKey =
     let
         fromString =
-            Maybe.map StrawPollKey << String.toInt
+            Maybe.map PollKey << String.toInt
     in
     custom "STRAW_POLL_KEY" fromString
 
@@ -22,8 +22,8 @@ strawPollKey =
 parser : Parser (Route -> a) a
 parser =
     oneOf
-        [ map CreateStrawPoll top
-        , map StrawPoll (top </> strawPollKey)
+        [ map CreatePoll top
+        , map Poll (top </> pollKey)
         ]
 
 

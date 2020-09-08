@@ -1,4 +1,4 @@
-module Pages.CreateStrawPoll exposing
+module Pages.CreatePoll exposing
     ( Message(..)
     , Model
     , init
@@ -8,19 +8,34 @@ module Pages.CreateStrawPoll exposing
 
 import Browser exposing (Document)
 import Html exposing (h1, text)
+import TwoOrMore exposing (TwoOrMore)
+
+
+type alias Field value =
+    { value : value
+    , error : String
+    }
+
+
+type alias Model =
+    { question : Field String
+    , answers : TwoOrMore (Field String)
+    }
 
 
 type Message
     = NoOp
 
 
-type alias Model =
-    ()
-
-
 init : Model
 init =
-    ()
+    { question = { value = "", error = "" }
+    , answers =
+        TwoOrMore.make
+            { value = "", error = "" }
+            { value = "", error = "" }
+            []
+    }
 
 
 update : Message -> Model -> ( Model, Cmd Message )

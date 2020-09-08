@@ -16,9 +16,8 @@ toString (NonEmptyString string) =
 
 make : String -> Maybe NonEmptyString
 make string =
-    case string of
-        "" ->
-            Nothing
+    if String.isEmpty string then
+        Nothing
 
-        _ ->
-            Just <| NonEmptyString string
+    else
+        Just <| NonEmptyString string
