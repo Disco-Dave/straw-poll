@@ -18,7 +18,7 @@ import Data.Functor (($>))
 import Data.Maybe (mapMaybe)
 import Data.Text (Text)
 import qualified Data.Text as Text
-import Data.Time (UTCTime, ZonedTime, zonedTimeToUTC)
+import Data.Time (UTCTime)
 import GHC.Generics (Generic)
 import Numeric.Natural (Natural)
 import StrawPoll.AesonHelpers (options)
@@ -54,19 +54,9 @@ data Poll = Poll
   { pollId :: !(Id Poll),
     pollQuestion :: !NonEmptyText,
     pollAnswers :: !(TwoOrMore Answer),
-    pollExpiration :: !(Maybe ZonedTime)
+    pollExpiration :: !(Maybe UTCTime)
   }
-  deriving (Show, Generic)
-
-instance Eq Poll where
-  poll1 == poll2 =
-    let getSnapshot Poll {..} =
-          ( pollId,
-            pollQuestion,
-            pollAnswers,
-            fmap zonedTimeToUTC pollExpiration
-          )
-     in getSnapshot poll1 == getSnapshot poll2
+  deriving (Show, Generic, Eq)
 
 instance ToJSON Poll where
   toJSON = genericToJSON $ options "poll"
@@ -75,18 +65,9 @@ instance ToJSON Poll where
 data CreatePollRequest = CreatePollRequest
   { createPollRequestQuestion :: !Text,
     createPollRequestAnswers :: !([Text]),
-    createPollRequestExpiration :: !(Maybe ZonedTime)
+    createPollRequestExpiration :: !(Maybe UTCTime)
   }
-  deriving (Show, Generic)
-
-instance Eq CreatePollRequest where
-  req1 == req2 =
-    let getSnapshot CreatePollRequest {..} =
-          ( createPollRequestQuestion,
-            createPollRequestAnswers,
-            fmap zonedTimeToUTC createPollRequestExpiration
-          )
-     in getSnapshot req1 == getSnapshot req2
+  deriving (Show, Generic, Eq)
 
 instance FromJSON CreatePollRequest where
   parseJSON = genericParseJSON $ options "createPollRequest"
@@ -119,9 +100,9 @@ instance ToJSON CreatePollRequestErrors where
 data UnsavedPoll = UnsavedPoll
   { unsavedPollQuestion :: !NonEmptyText,
     unsavedPollAnswers :: !(TwoOrMore NonEmptyText),
-    unsavedPollExpiration :: !(Maybe ZonedTime)
+    unsavedPollExpiration :: !(Maybe UTCTime)
   }
-  deriving (Show)
+  deriving (Show, Eq)
 
 validateCreatePollRequest :: UTCTime -> CreatePollRequest -> Either CreatePollRequestErrors UnsavedPoll
 validateCreatePollRequest currentTime CreatePollRequest {..} =
@@ -144,7 +125,7 @@ validateCreatePollRequest currentTime CreatePollRequest {..} =
         case createPollRequestExpiration of
           Nothing -> Success Nothing
           Just expirationTime
-            | zonedTimeToUTC expirationTime > currentTime ->
+            | expirationTime > currentTime ->
               Success $ Just expirationTime
             | otherwise ->
               let err = Just "Expiration may not be less than or equal to today."
@@ -186,6 +167,6 @@ vote saveVote currentTime poll@Poll {..} answer
        in not $ any isRequestedAnswer pollAnswers
     isExpired =
       case pollExpiration of
-        Just (zonedTimeToUTC -> expiration)
+        Just expiration
           | expiration <= currentTime -> True
         _ -> False

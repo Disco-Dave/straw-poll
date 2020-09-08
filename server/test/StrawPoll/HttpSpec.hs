@@ -143,7 +143,7 @@ spec = do
             HspecWai.post "/polls/1/votes/3" mempty `HspecWai.shouldRespondWith` [json| "Cannot find requested answer." |] {HspecWai.matchStatus = 404}
 
     it "responds with 400 if poll is expired" $ do
-      expiration <- utcToLocalZonedTime =<< addUTCTime (-1 * nominalDay) <$> getCurrentTime
+      expiration <- addUTCTime (-1 * nominalDay) <$> getCurrentTime
       let poll =
             Poll
               { pollId = Id 1,

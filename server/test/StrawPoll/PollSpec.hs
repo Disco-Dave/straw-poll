@@ -1,7 +1,7 @@
 module StrawPoll.PollSpec (spec) where
 
 import Data.Functor.Identity (Identity (..))
-import Data.Time (UTCTime, addUTCTime, getCurrentTime, nominalDay, utcToLocalZonedTime)
+import Data.Time (UTCTime, addUTCTime, getCurrentTime, nominalDay)
 import Shared (savePoll, unsafeNonEmptyText)
 import StrawPoll.Poll
   ( Answer (..),
@@ -150,7 +150,7 @@ spec = do
        in createPoll currentTime request `shouldBe` expectedResponse
 
     it "does not allow expiration less than today" $ do
-      expiration <- utcToLocalZonedTime $ addUTCTime (-1 * nominalDay) currentTime
+      let expiration = addUTCTime (-1 * nominalDay) currentTime
       let request =
             CreatePollRequest
               { createPollRequestQuestion = "Some example",
@@ -167,11 +167,10 @@ spec = do
        in createPoll currentTime request `shouldBe` expectedResponse
 
     it "does not allow expiration equal to today" $ do
-      expiration <- utcToLocalZonedTime currentTime
       let request =
             CreatePollRequest
               { createPollRequestQuestion = "Some example",
-                createPollRequestExpiration = Just expiration,
+                createPollRequestExpiration = Just currentTime,
                 createPollRequestAnswers = ["Yes", "No"]
               }
           expectedResponse =
@@ -226,11 +225,10 @@ spec = do
        in createPoll currentTime request `shouldBe` expectedResponse
 
     it "all errors are reported" $ do
-      expiration <- utcToLocalZonedTime currentTime
       let request =
             CreatePollRequest
               { createPollRequestQuestion = "",
-                createPollRequestExpiration = Just expiration,
+                createPollRequestExpiration = Just currentTime,
                 createPollRequestAnswers = ["Yes"]
               }
           expectedResponse =
@@ -243,7 +241,7 @@ spec = do
        in createPoll currentTime request `shouldBe` expectedResponse
 
     it "allows a poll to be made when all rules are satisfied" $ do
-      expiration <- utcToLocalZonedTime $ addUTCTime nominalDay currentTime
+      let expiration = addUTCTime nominalDay currentTime
       let request =
             CreatePollRequest
               { createPollRequestQuestion = "Is this even a useful test?",
@@ -268,7 +266,7 @@ spec = do
 
   describe "vote" $ do
     it "does not allow voting for an answer that does not exist for a given poll" $ do
-      expiration <- utcToLocalZonedTime $ addUTCTime nominalDay currentTime
+      let expiration = addUTCTime nominalDay currentTime
       let poll =
             Poll
               { pollId = Id 11,
@@ -285,7 +283,7 @@ spec = do
        in vote currentTime poll (Id 6) `shouldBe` AnswerNotFound
 
     it "does not allow voting when the poll is expired" $ do
-      expiration <- utcToLocalZonedTime $ addUTCTime (-1 * nominalDay) currentTime
+      let expiration = addUTCTime (-1 * nominalDay) currentTime
       let poll =
             Poll
               { pollId = Id 11,
@@ -302,7 +300,7 @@ spec = do
        in vote currentTime poll (Id 2) `shouldBe` PollIsExpired
 
     it "allows voting when the poll is not expired" $ do
-      expiration <- utcToLocalZonedTime $ addUTCTime nominalDay currentTime
+      let expiration = addUTCTime nominalDay currentTime
       let poll =
             Poll
               { pollId = Id 11,
