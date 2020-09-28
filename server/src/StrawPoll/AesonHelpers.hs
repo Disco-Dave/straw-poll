@@ -5,7 +5,6 @@ module StrawPoll.AesonHelpers
 where
 
 import qualified Data.Aeson as Aeson
-import Data.Char (toLower)
 import Data.List (stripPrefix)
 
 fieldLabelModifier :: String -> String -> String
