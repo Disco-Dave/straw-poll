@@ -1,3 +1,117 @@
-body {
-    color: orange;
+:root {
+  font-size: 8px;
+  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+
+  --invalid-color: #b70000;
+  --success-color: #00b112;
+  --focus-color: #0035be;
+  --foreground-color: black;
+  --background-color: white;
 }
+
+body {
+  font-size: 2rem;
+  color: var(--foreground-color);
+}
+
+.container {
+  margin: 0px;
+  width: calc(100% - 10rem);
+  padding: 5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.control {
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template:
+    "label info" 3rem
+    "input input" 5rem
+    "help help" 2rem / 3fr 1fr;
+}
+
+.control:last-child {
+  margin-bottom: 0;
+}
+
+.control__label {
+  grid-area: label;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.control__info {
+  grid-area: info;
+  font-size: 1.5rem;
+  align-self: start;
+  justify-self: end;
+}
+
+.control__input {
+  grid-area: input;
+  padding: 1rem;
+  font-size: 2rem;
+  color: var(--foreground-color);
+  border: 0.125rem solid var(--foreground-color);
+  border-radius: 0.5rem;
+}
+
+.control__input:focus {
+  border-width: 0.25rem;
+  padding: 0.875rem;
+  border-color: var(--focus-color);
+}
+
+.control--invalid .control__input {
+  border-color: var(--invalid-color);
+}
+
+.control--invalid .control__help {
+  color: var(--invalid-color);
+}
+
+.control__help {
+  grid-area: help;
+  align-self: end;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+}
+
+.action-buttons {
+  height: 7rem;
+  display: flex;
+}
+
+.button {
+  cursor: pointer;
+  margin: 0 1rem 0 0;
+  height: 5rem;
+  width: 13rem;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.button:last-child {
+  margin: 0;
+}
+
+.button--primary {
+  background-color: var(--success-color);
+  font-weight: bold;
+  color: var(--background-color);
+}
+
+.button--secondary {
+  background-color: var(--background-color);
+  color: var(--invalid-color);
+  border: 0.25rem solid var(--invalid-color);
+  width: calc(inherit - 0.5rem);
+  height: calc(inherit - 0.5rem);
+}
+

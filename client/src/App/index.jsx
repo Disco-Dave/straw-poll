@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Poll from "./pages/Poll";
 import CreatePoll from "./pages/CreatePoll";
 import NotFound from "./pages/NotFound";
+import Poll from "./pages/Poll";
 
 export default function App() {
   return (
