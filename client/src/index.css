@@ -111,7 +111,7 @@ body {
   background-color: var(--background-color);
   color: var(--invalid-color);
   border: 0.25rem solid var(--invalid-color);
-  width: calc(inherit - 0.5rem);
-  height: calc(inherit - 0.5rem);
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
