@@ -5,7 +5,7 @@
     Arial, sans-serif;
 
   --invalid-color: #b70000;
-  --success-color: #00b112;
+  --success-color: #028219;
   --focus-color: #0035be;
   --foreground-color: black;
   --background-color: white;
@@ -18,8 +18,15 @@ body {
 
 .container {
   margin: 0px;
-  width: calc(100% - 10rem);
   padding: 5rem;
+}
+
+@media screen and (min-width: 800px) {
+  .container {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .form {
@@ -111,7 +118,20 @@ body {
   background-color: var(--background-color);
   color: var(--invalid-color);
   border: 0.25rem solid var(--invalid-color);
-  width: 0.5rem;
-  height: 0.5rem;
 }
 
+.control-link {
+  margin-bottom: 4rem;
+}
+
+.link-button {
+  text-decoration-line: none;
+}
+
+.link-button:hover {
+  text-decoration-line: underline;
+}
+
+.link-button:visited {
+  color: rgb(0, 0, 238);
+}

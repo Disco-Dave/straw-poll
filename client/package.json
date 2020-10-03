@@ -5,7 +5,9 @@
   "main": "index.html",
   "scripts": {
     "serve": "rm -rf .parcel/serve && parcel --cache-dir .parcel/cache -d .parcel/serve src/index.html",
-    "build": "rm -rf dist && parcel build --no-source-maps --cache-dir .parcel/cache -d dist src/index.html"
+    "build": "rm -rf dist && parcel build --no-source-maps --cache-dir .parcel/cache -d dist src/index.html",
+    "lint": "eslint src/**/*.js src/**/*.jsx",
+    "lint-fix": "eslint --fix src/**/*.js src/**/*.jsx"
   },
   "keywords": [],
   "author": "",
