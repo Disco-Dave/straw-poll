@@ -18,14 +18,13 @@ export default function Answer({
       info={
         showRemove ? (
           <span className="control__info">
-            <a
-              href="#"
+            <button
               name={`Remove Answer ${answerNumber}`}
-              className="link-button"
+              className="button button--link"
               onClick={onRemove}
             >
               Remove
-            </a>
+            </button>
           </span>
         ) : null
       }

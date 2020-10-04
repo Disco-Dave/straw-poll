@@ -1,14 +1,15 @@
 :root {
-  font-size: 8px;
-  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica,
-    Arial, sans-serif;
-
   --invalid-color: #b70000;
   --success-color: #028219;
   --focus-color: #0035be;
   --foreground-color: black;
   --background-color: white;
+  --font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+
+  font-size: 8px;
+  font-family: var(--font-family);
 }
 
 body {
@@ -67,6 +68,7 @@ body {
   color: var(--foreground-color);
   border: 0.125rem solid var(--foreground-color);
   border-radius: 0.5rem;
+  font-family: var(--font-family);
 }
 
 .control__input:focus {
@@ -120,18 +122,27 @@ body {
   border: 0.25rem solid var(--invalid-color);
 }
 
-.control-link {
-  margin-bottom: 4rem;
+.button--link {
+  padding: 0;
+  margin: 0;
+  width: auto;
+  height: auto;
+  color: #0000EE;
+  background-color: transparent;
 }
 
-.link-button {
-  text-decoration-line: none;
+.control__info .button--link {
+  font-size: 1.5rem;
 }
 
-.link-button:hover {
+.button--link:hover {
   text-decoration-line: underline;
 }
 
-.link-button:visited {
-  color: rgb(0, 0, 238);
+.button--link:active {
+  outline: none;
+}
+
+.control-link {
+  margin-bottom: 4rem;
 }
