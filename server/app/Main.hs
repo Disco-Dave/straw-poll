@@ -33,7 +33,7 @@ main :: IO ()
 main = do
   Config {..} <- getConfig
 
-  let connectInfo = 
+  let connectInfo =
         Postgres.ConnectInfo
           { connectHost = configPgHost,
             connectPort = configPgPort,

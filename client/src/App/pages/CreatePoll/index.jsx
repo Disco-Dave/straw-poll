@@ -13,21 +13,11 @@ const initialField = () => ({
 const initialState = () => ({
   question: initialField(),
   answers: Array.from({ length: MINIMAL_ANSWERS }).map(initialField),
+  expiration: null,
 });
 
 export default function CreatePoll() {
   const [state, setState] = React.useState(initialState());
-
-  function handleOnChange(e) {
-    const recognizedFields = Object.keys(state);
-
-    if (e?.target?.name && recognizedFields.includes(e.target.name)) {
-      setState({
-        ...state,
-        [e.target.name]: e.target.value,
-      });
-    }
-  }
 
   function handleOnSubmit(e) {
     e?.preventDefault?.();
@@ -62,10 +52,6 @@ export default function CreatePoll() {
     });
   };
 
-  const handleAnswerBlur = (index) => () => {
-    console.log("Blurred ", index);
-  };
-
   return (
     <main className="container">
       <h1>Create Poll</h1>
@@ -82,11 +68,28 @@ export default function CreatePoll() {
             type="text"
             className="control__input"
             value={state.question.value}
-            onChange={handleOnChange}
+            onChange={(e) =>
+              setState({
+                ...state,
+                question: {
+                  ...state.question,
+                  value: e.target.value,
+                },
+              })
+            }
           />
         </Control>
 
-        <Expiration />
+        <Expiration
+          min={new Date()}
+          value={state.expiration}
+          onChange={(d) =>
+            setState({
+              ...state,
+              expiration: d,
+            })
+          }
+        />
 
         {state.answers.map((answer, index) => (
           <Answer
@@ -97,7 +100,6 @@ export default function CreatePoll() {
             showRemove={state.answers.length > MINIMAL_ANSWERS}
             onRemove={handleRemoveAnswer(index)}
             onChange={handleAnswerChange(index)}
-            onBlur={handleAnswerBlur(index)}
           />
         ))}
 
