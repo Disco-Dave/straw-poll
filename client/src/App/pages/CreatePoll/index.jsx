@@ -1,7 +1,7 @@
 import React from "react";
 import Control from "../../form/Control";
+import DateInput from "../../form/DateInput";
 import Answer from "./Answer";
-import Expiration from "./Expiration";
 
 const MINIMAL_ANSWERS = 2;
 
@@ -13,14 +13,90 @@ const initialField = () => ({
 const initialState = () => ({
   question: initialField(),
   answers: Array.from({ length: MINIMAL_ANSWERS }).map(initialField),
-  expiration: null,
+  expiration: {
+    value: null,
+    error: "",
+  },
 });
+
+const validate = {
+  question(state) {
+    const value = state?.question?.value?.trim?.();
+    const error =
+      value === null || value === undefined || value === ""
+        ? "Question is required."
+        : "";
+
+    return {
+      ...state,
+      question: {
+        ...state.question,
+        error,
+      },
+    };
+  },
+  answer: (index) => (state) => {
+    return {
+      ...state,
+      answers: state.answers.map((a, i) => {
+        if (i === index) {
+          const value = a?.value?.trim?.();
+          const error =
+            value === null || value === undefined || value === ""
+              ? "Answer is required."
+              : "";
+          return {
+            ...a,
+            error,
+          };
+        } else {
+          return a;
+        }
+      }),
+    };
+  },
+  expiration(state) {
+    const today = new Date();
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+
+    const error =
+      state?.expiration?.value && state.expiration.value < today
+        ? "Expiration may not be less than today."
+        : "";
+    return {
+      ...state,
+      expiration: {
+        ...state.expiration,
+        error,
+      },
+    };
+  },
+  all(state) {
+    return this.question(
+      this.expiration(
+        state.answers.reduce((st, _, i) => this.answer(i)(st), { ...state })
+      )
+    );
+  },
+};
 
 export default function CreatePoll() {
   const [state, setState] = React.useState(initialState());
 
   function handleOnSubmit(e) {
     e?.preventDefault?.();
+    const validatedState = validate.all(state);
+    setState(validatedState);
+
+    if (
+      !validatedState.expiration.error &&
+      !validatedState.question.error &&
+      validatedState.answers.every(({ error }) => !error)
+    ) {
+      console.log("submit", validatedState);
+    }
   }
 
   function handleOnReset() {
@@ -77,19 +153,34 @@ export default function CreatePoll() {
                 },
               })
             }
+            onBlur={() => setState(validate.question)}
           />
         </Control>
 
-        <Expiration
-          min={new Date()}
-          value={state.expiration}
-          onChange={(d) =>
-            setState({
-              ...state,
-              expiration: d,
-            })
-          }
-        />
+        <Control
+          htmlFor="expiration"
+          label="Expiration"
+          error={state.expiration.error}
+          info="optional"
+        >
+          <DateInput
+            id="question"
+            name="question"
+            className="control__input"
+            value={state.expiration.value}
+            min={new Date()}
+            onChange={(e) =>
+              setState({
+                ...state,
+                expiration: {
+                  ...state.expiration,
+                  value: e.target.value,
+                },
+              })
+            }
+            onBlur={() => setState(validate.expiration)}
+          />
+        </Control>
 
         {state.answers.map((answer, index) => (
           <Answer
@@ -100,6 +191,7 @@ export default function CreatePoll() {
             showRemove={state.answers.length > MINIMAL_ANSWERS}
             onRemove={handleRemoveAnswer(index)}
             onChange={handleAnswerChange(index)}
+            onBlur={() => setState(validate.answer(index))}
           />
         ))}
 

@@ -58,7 +58,7 @@ export default function DateInput({
       name={name}
       min={min ? displayDate(min) : null}
       max={max ? displayDate(max) : null}
-      value={value ? displayDate(value) : null}
+      value={displayDate(value)}
       onChange={handleOnChange}
       onBlur={onBlur}
     />
