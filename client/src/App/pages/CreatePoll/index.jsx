@@ -95,7 +95,17 @@ export default function CreatePoll() {
       !validatedState.question.error &&
       validatedState.answers.every(({ error }) => !error)
     ) {
-      console.log("submit", validatedState);
+      fetch("http://localhost:9999/polls", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: validatedState.question.value,
+          expiration: validatedState.expiration.value,
+          answers: validatedState.answers.map(({ value }) => value),
+        }),
+      });
     }
   }
 

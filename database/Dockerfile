@@ -1,6 +1,6 @@
 FROM straw-poll-haskell-deps:latest AS build
 
-RUN stack install --system-ghc --resolver lts-16.10 --copy-bins --local-bin-path /root/dist postgresql-simple-migration
+RUN stack install --system-ghc --resolver lts-16.18 --copy-bins --local-bin-path /root/dist postgresql-simple-migration
 
 
 FROM debian:buster-slim
