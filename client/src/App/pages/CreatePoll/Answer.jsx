@@ -20,6 +20,7 @@ export default function Answer({
           <span className="control__info">
             <button
               name={`Remove Answer ${answerNumber}`}
+              type="button"
               className="button button--link"
               onClick={onRemove}
             >

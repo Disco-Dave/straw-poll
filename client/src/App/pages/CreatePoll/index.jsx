@@ -99,40 +99,15 @@ export default function CreatePoll() {
     }
   }
 
-  function handleOnReset() {
-    setState(initialState());
-  }
-
-  function handleAddAnswer(e) {
-    e?.preventDefault?.();
-    setState({
-      ...state,
-      answers: [...state.answers, initialField()],
-    });
-  }
-
-  const handleRemoveAnswer = (index) => (e) => {
-    e?.preventDefault?.();
-    setState({
-      ...state,
-      answers: state.answers.filter((_, i) => i !== index),
-    });
-  };
-
-  const handleAnswerChange = (index) => (e) => {
-    setState({
-      ...state,
-      answers: state.answers.map((v, i) =>
-        i === index ? { ...v, value: e.target.value } : v
-      ),
-    });
-  };
-
   return (
     <main className="container">
       <h1>Create Poll</h1>
 
-      <form className="form" onSubmit={handleOnSubmit} onReset={handleOnReset}>
+      <form
+        className="form"
+        onSubmit={handleOnSubmit}
+        onReset={() => setState(initialState())}
+      >
         <Control
           htmlFor="question"
           label="Question"
@@ -189,14 +164,35 @@ export default function CreatePoll() {
             value={answer.value}
             error={answer.error}
             showRemove={state.answers.length > MINIMAL_ANSWERS}
-            onRemove={handleRemoveAnswer(index)}
-            onChange={handleAnswerChange(index)}
+            onRemove={() =>
+              setState({
+                ...state,
+                answers: state.answers.filter((_, i) => i !== index),
+              })
+            }
+            onChange={(e) =>
+              setState({
+                ...state,
+                answers: state.answers.map((v, i) =>
+                  i === index ? { ...v, value: e.target.value } : v
+                ),
+              })
+            }
             onBlur={() => setState(validate.answer(index))}
           />
         ))}
 
         <div className="control-link">
-          <button className="button button--link" onClick={handleAddAnswer}>
+          <button
+            className="button button--link"
+            type="button"
+            onClick={() =>
+              setState({
+                ...state,
+                answers: [...state.answers, initialField()],
+              })
+            }
+          >
             Add answer
           </button>
         </div>
