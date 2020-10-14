@@ -23,5 +23,8 @@ module.exports = {
     "react"
   ],
   "rules": {
+  },
+  "globals": {
+    "process": true
   }
 };

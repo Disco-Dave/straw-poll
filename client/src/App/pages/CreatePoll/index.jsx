@@ -95,7 +95,7 @@ export default function CreatePoll() {
       !validatedState.question.error &&
       validatedState.answers.every(({ error }) => !error)
     ) {
-      fetch("http://localhost:9999/polls", {
+      fetch(`${process.env.API_URL}/polls`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

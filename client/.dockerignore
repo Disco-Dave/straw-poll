@@ -1,0 +1,6 @@
+.parcel
+node_modules
+dist
+.gitignore
+.eslintrc.js
+.env.development
