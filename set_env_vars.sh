@@ -8,5 +8,6 @@ export STRAW_POLL_PG_HOST=localhost
 export STRAW_POLL_PG_MIGRATE_USER=postgres
 export STRAW_POLL_PG_MIGRATE_PASSWORD=postgres
 export STRAW_POLL_API_URL="http://localhost:9999"
+export STRAW_POLL_CLIENT_PORT=8080
 
 $@
