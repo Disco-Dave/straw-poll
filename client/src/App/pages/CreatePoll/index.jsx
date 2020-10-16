@@ -1,4 +1,5 @@
 import React from "react";
+import * as Router from "react-router-dom";
 import Control from "../../form/Control";
 import DateInput from "../../form/DateInput";
 import Answer from "./Answer";
@@ -85,7 +86,7 @@ const validate = {
 
 export default function CreatePoll() {
   const [state, setState] = React.useState(initialState());
-  const [isRequestActive, setIsRequestActive] = React.useState(false);
+  const history = Router.useHistory();
 
   function handleOnSubmit(e) {
     e?.preventDefault?.();
@@ -97,20 +98,13 @@ export default function CreatePoll() {
       !validatedState.question.error &&
       validatedState.answers.every(({ error }) => !error)
     ) {
-      setIsRequestActive(true);
-
       createPoll({
         question: validatedState.question.value,
         expiration: validatedState.expiration.value,
         answers: validatedState.answers.map(({ value }) => value),
-      })
-        .then(() => {
-          console.log("redirect to poll page");
-        })
-        .catch(() => {
-          setIsRequestActive(false);
-          console.log("display an error");
-        });
+      }).then(({ id }) => {
+        history.push(`/${id}`);
+      });
     }
   }
 
