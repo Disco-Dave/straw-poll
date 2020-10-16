@@ -8,7 +8,7 @@ RUN npm install
 COPY . ./
 
 ARG api_url=http://localhost:9999
-ENV API_URL $api_url
+ENV STRAW_POLL_API_URL $api_url
 
 RUN npm run bundle
 

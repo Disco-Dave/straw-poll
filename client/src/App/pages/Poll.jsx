@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as ReactRouterDom from "react-router-dom";
-import NotFound from "../NotFound";
+import NotFound from "./NotFound";
 
 function FoundPoll({ pollId }) {
   return <h1> Poll {pollId} </h1>;
