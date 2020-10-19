@@ -31,3 +31,19 @@ export function getPoll(pollId) {
     }
   });
 }
+
+export function vote(pollId, answerId) {
+  const url = `${process.env.STRAW_POLL_API_URL}/polls/${encodeURI(pollId)}/votes/${encodeURI(answerId)}`;
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (response.ok) {
+      return response.json()
+    } else {
+      return Promise.reject(response)
+    }
+  });
+}

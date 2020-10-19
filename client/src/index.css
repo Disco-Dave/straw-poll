@@ -23,22 +23,39 @@ body {
   padding: 5rem;
 }
 
-.form {
+.container__title, .container__subtitle {
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.container__subtitle {
+  font-size: 2rem;
+}
+
+.form, .vote {
   display: flex;
   flex-direction: column;
 }
 
-.control {
+.radio,
+.control,
+.vote {
   margin-bottom: 2rem;
+}
+
+
+.radio:last-child,
+.control:last-child {
+  margin-bottom: 0;
+}
+
+
+.control {
   display: grid;
   grid-template:
     "label info" 3rem
     "input input" 5rem
     "help help" 2rem / 3fr 1fr;
-}
-
-.control:last-child {
-  margin-bottom: 0;
 }
 
 .control__label {

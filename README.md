@@ -1,3 +1,10 @@
+### How to run
+1. `git clone https://github.com/Disco-Dave/straw-poll.git`
+2. `cd straw-poll`
+3. `./build.sh`
+4. `docker-compose up -d`
+5. `firefox http://localhost:8080`
+
 ### Environment Variables
 Name                           | Description                               
 -------------------------------|------------------------------------------
