@@ -22,14 +22,6 @@ body {
   padding: 5rem;
 }
 
-@media screen and (min-width: 800px) {
-  .container {
-    width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
 .form {
   display: flex;
   flex-direction: column;
@@ -63,7 +55,7 @@ body {
 
 .control__input {
   grid-area: input;
-  padding: 1rem;
+  padding: calc(1rem + 0.125rem);
   font-size: 2rem;
   color: var(--foreground-color);
   border: 0.125rem solid var(--foreground-color);
@@ -79,10 +71,24 @@ body {
 
 .control--invalid .control__input {
   border-color: var(--invalid-color);
+  padding-right: 4rem;
 }
 
 .control--invalid .control__help {
   color: var(--invalid-color);
+}
+
+.control--invalid::after {
+  font-family: "Font Awesome 5 Free";
+  font-size: 3rem;
+  position: relative;
+  top: 0.875rem;
+  right: 4.125rem;
+  width: 0;
+  grid-row-start: 2;
+  grid-column-start: 3;
+  color: var(--invalid-color);
+  content: "\f06a";
 }
 
 .control__help {
@@ -127,7 +133,7 @@ body {
   margin: 0;
   width: auto;
   height: auto;
-  color: #0000EE;
+  color: #0000ee;
   background-color: transparent;
 }
 
@@ -145,4 +151,12 @@ body {
 
 .control-link {
   margin-bottom: 4rem;
+}
+
+@media screen and (min-width: 800px) {
+  .container {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

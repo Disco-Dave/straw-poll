@@ -17,16 +17,14 @@ export default function Answer({
       htmlFor={`answer${answerNumber}`}
       info={
         showRemove ? (
-          <span className="control__info">
-            <button
-              name={`Remove Answer ${answerNumber}`}
-              type="button"
-              className="button button--link"
-              onClick={onRemove}
-            >
-              Remove
-            </button>
-          </span>
+          <button
+            name={`Remove Answer ${answerNumber}`}
+            type="button"
+            className="button button--link"
+            onClick={onRemove}
+          >
+            Remove
+          </button>
         ) : null
       }
       label={`Answer ${answerNumber}`}
