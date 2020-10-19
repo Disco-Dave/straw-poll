@@ -13,6 +13,7 @@
 }
 
 body {
+  margin: 0px;
   font-size: 2rem;
   color: var(--foreground-color);
 }
@@ -55,7 +56,7 @@ body {
 
 .control__input {
   grid-area: input;
-  padding: calc(1rem + 0.125rem);
+  padding: 1.125rem;
   font-size: 2rem;
   color: var(--foreground-color);
   border: 0.125rem solid var(--foreground-color);
@@ -71,7 +72,7 @@ body {
 
 .control--invalid .control__input {
   border-color: var(--invalid-color);
-  padding-right: 4rem;
+  padding-right: 3.875rem;
 }
 
 .control--invalid .control__help {
@@ -83,7 +84,7 @@ body {
   font-size: 3rem;
   position: relative;
   top: 0.875rem;
-  right: 4.125rem;
+  right: 4rem;
   width: 0;
   grid-row-start: 2;
   grid-column-start: 3;

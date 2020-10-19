@@ -15,3 +15,19 @@ export function createPoll(poll) {
     }
   });
 }
+
+export function getPoll(pollId) {
+  const url = `${process.env.STRAW_POLL_API_URL}/polls/${encodeURI(pollId)}`;
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (response.ok) {
+      return response.json()
+    } else {
+      return Promise.reject(response)
+    }
+  });
+}

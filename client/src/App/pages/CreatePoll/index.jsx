@@ -88,6 +88,9 @@ export default function CreatePoll() {
   const [state, setState] = React.useState(initialState());
   const history = Router.useHistory();
 
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() + 1);
+
   function handleOnSubmit(e) {
     e?.preventDefault?.();
     const validatedState = validate.all(state);
@@ -152,7 +155,7 @@ export default function CreatePoll() {
             name="question"
             className="control__input"
             value={state.expiration.value}
-            min={new Date()}
+            min={minDate}
             onChange={(e) =>
               setState({
                 ...state,
