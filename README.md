@@ -1,3 +1,6 @@
+### Description
+A simple straw poll application. Create poll, vote on poll, and view results.
+
 ### How to run
 1. `git clone https://github.com/Disco-Dave/straw-poll.git`
 2. `cd straw-poll`
